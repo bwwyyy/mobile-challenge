@@ -1,5 +1,6 @@
 package com.android.philip.photoapp;
 
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.os.Bundle;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.android.philip.photoapp.api.PxApi;
 import com.android.philip.photoapp.api.XAuth500pxTask;
@@ -27,6 +29,8 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
 
     RecyclerView mRecyclerView;
 
+    private static ImgStore mImgStore;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,25 +50,18 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         XAuth500pxTask loginTask = new XAuth500pxTask(this);
         try {
             this.mAccessToken = loginTask.execute(getString(R.string.consumer_key), getString(R.string.consumer_secret),
-                    getString(R.string.user), getString(R.string.user_password)).get();
+                    "", "").get();
         } catch (Exception e) {
             Log.w(TAG, e.toString());
         }
         this.mPxApi = new PxApi(this.mAccessToken, getString(R.string.consumer_key), getString(R.string.consumer_secret));
-        this.mPxApi = null;
+
+        // Load Img
+        mImgStore = new ImgStore();
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String url = "/photos?feature=user&username=&sort=created_at&image_size=20&include_store=store_download&include_states=voted";
-                JSONObject res = mPxApi.get(url);
-                JSONArray photos = null;
-                try {
-                    photos = res.getJSONArray("photos");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                int len = photos.length();
-                Log.d(TAG, "Load " + len + " images.");
+                refreshImgStorage();
             }
         });
     }
@@ -77,4 +74,39 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
 
     @Override
     public void onFail(FiveHundredException e) {}
+
+    private void refreshImgStorage () {
+        String url = "/photos?feature=user&username=" + mUsername + "&sort=created_at&image_size=20&include_store=store_download&include_states=voted";
+
+        new AsyncTask<String, Void, Integer>() {
+            @Override
+            protected Integer doInBackground(String... params) {
+                if (mPxApi == null)
+                    return -1;
+
+                JSONObject res = null;
+                try {
+                    res = mPxApi.get(params[0]);
+                    JSONArray photos = res.getJSONArray("photos");
+                    int len = photos.length();
+                    for (int i = 0; i < len; ++ i) {
+                        JSONObject curr = photos.getJSONObject(i);
+                        String key = curr.getString("id");
+                        mImgStore.addImage(key, curr);
+                    }
+
+                    Log.d(TAG, "Load " + mImgStore.size() + " images.");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return 0;
+            }
+
+            @Override
+            protected void onPostExecute(Integer in) {
+
+            }
+
+        }.execute(url);
+    }
 }
