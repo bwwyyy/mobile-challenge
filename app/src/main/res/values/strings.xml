@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">PhotoApp</string>
+    <string name="consumer_key">ECeF0JGYDRsSaMdSoSOcpNvIy1YmsYR1nd7wAAro</string>
+    <string name="consumer_secret">TyCqaUFgDwxkOB1nDF8gbHl6ol9H65h9KhS9RCd4</string>
+    <string name="user"></string>
+    <string name="user_password"></string>
 </resources>
