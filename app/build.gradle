@@ -20,6 +20,10 @@ android {
     useLibrary 'org.apache.http.legacy'
 }
 
+repositories {
+    maven { url 'https://github.com/500px/greedo-layout-for-android/raw/master/releases/' }
+}
+
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -28,6 +32,8 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.1.0'
     compile 'com.android.support:design:25.1.0'
     compile 'com.android.support:appcompat-v7:25.1.0'
+    compile 'com.fivehundredpx:greedo-layout:1.0.0'
+    compile 'com.squareup.picasso:picasso:2.2.+'
     testCompile 'junit:junit:4.12'
     compile 'oauth.signpost:signpost-core:1.2.1.2'
     compile 'oauth.signpost:signpost-commonshttp4:1.2.1.2'

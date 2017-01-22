@@ -1,14 +1,8 @@
 package com.android.philip.photoapp.api.auth;
 
-/**
- * Created by Philip Bao on 2017-01-15.
- */
 
 public class FiveHundredException extends Exception {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1755802476069592558L;
 
     private int statusCode = 0 ;

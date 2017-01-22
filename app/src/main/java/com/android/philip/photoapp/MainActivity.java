@@ -14,6 +14,8 @@ import com.android.philip.photoapp.api.PxApi;
 import com.android.philip.photoapp.api.XAuth500pxTask;
 import com.android.philip.photoapp.api.auth.AccessToken;
 import com.android.philip.photoapp.api.auth.FiveHundredException;
+import com.fivehundredpx.greedolayout.GreedoLayoutManager;
+import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,7 +29,8 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
     private AccessToken mAccessToken;
     public static PxApi mPxApi;
 
-    RecyclerView mRecyclerView;
+    private RecyclerView mRecyclerView;
+    private ImageAdapter mImgAdapter;
 
     private static ImgStore mImgStore;
 
@@ -37,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         setContentView(R.layout.activity_main);
 
         mUsername = "";
+        mImgStore = new ImgStore();
 
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
@@ -44,6 +48,19 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         mRefreshButton = (Button) findViewById(R.id.load_button);
+
+        // Main activity container
+        mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
+
+        mImgAdapter = new ImageAdapter(this, mImgStore);
+        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(mImgAdapter);
+        layoutManager.setMaxRowHeight(MeasUtils.dpToPx(150, this));
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setAdapter(mImgAdapter);
+
+        int spacing = MeasUtils.dpToPx(4, this);
+        mRecyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
 
 
         // Login
@@ -57,7 +74,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         this.mPxApi = new PxApi(this.mAccessToken, getString(R.string.consumer_key), getString(R.string.consumer_secret));
 
         // Load Img
-        mImgStore = new ImgStore();
+
         mRefreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,7 +121,11 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
 
             @Override
             protected void onPostExecute(Integer in) {
-
+                if (in == -1)
+                    Toast.makeText(getApplicationContext(), "Not Login yet!",Toast.LENGTH_SHORT).show();
+                mImgAdapter.updateDataSet(mImgStore);
+                mImgAdapter.notifyDataSetChanged();
+                mRecyclerView.setAdapter(mImgAdapter);
             }
 
         }.execute(url);
