@@ -1,5 +1,6 @@
 package com.android.philip.photoapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -24,8 +25,8 @@ import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements XAuth500pxTask.Delegate {
     private static final String TAG = "MainActivity";
+    private static final int STATIC_INTEGER_VALUE = 12345;
 
-    private Button mRefreshButton;
     private static String mUsername;
     private AccessToken mAccessToken;
     public static PxApi mPxApi;
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
-        mRefreshButton = (Button) findViewById(R.id.load_button);
 
         // Main activity container
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
@@ -65,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
 
 
         // Login
+        this.mPxApi = null;
+        /*
         XAuth500pxTask loginTask = new XAuth500pxTask(this);
         try {
             this.mAccessToken = loginTask.execute(getString(R.string.consumer_key), getString(R.string.consumer_secret),
@@ -73,15 +75,11 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
             Log.w(TAG, e.toString());
         }
         this.mPxApi = new PxApi(this.mAccessToken, getString(R.string.consumer_key), getString(R.string.consumer_secret));
+        */
 
-        // Load Img
 
-        mRefreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refreshImgStorage();
-            }
-        });
+        Intent logInIntent = new Intent(this, LoginActivity.class);
+        MainActivity.this.startActivityForResult(logInIntent, STATIC_INTEGER_VALUE);
     }
 
     public class PhotoOnClickListener implements View.OnClickListener {
@@ -95,6 +93,23 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
             fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.URL), mImgStore.getImgs());
 
             MainActivity.this.startActivity(fullScreenIntent);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (STATIC_INTEGER_VALUE) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    mUsername = data.getStringExtra(getString(R.string.USERNAME));
+                    mAccessToken = (AccessToken) data.getExtras().get((getString(R.string.ACCESS_TOKEN)));
+                    this.mPxApi = new PxApi(this.mAccessToken, getString(R.string.consumer_key), getString(R.string.consumer_secret));
+
+                    refreshImgStorage();
+                }
+                break;
+            }
         }
     }
 

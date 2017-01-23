@@ -5,4 +5,6 @@
     <string name="INDEX">idx</string>
     <string name="CACHE">cache</string>
     <string name="URL">url</string>
+    <string name="USERNAME">username</string>
+    <string name="ACCESS_TOKEN">access_token</string>
 </resources>
