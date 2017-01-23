@@ -21,3 +21,8 @@ This is a coding challenge for prospective mobile developer applicants applying 
 - [ ] Conforms to SOLID principles
 - [ ] Code is easily understood and communicative
 - [ ] Commit history is consistent, easy to follow and understand
+
+### Screenshots:
+![Image of login_screen](screenshots/login_screen.JPG)
+![Image of main_screen](screenshots/main_screen.JPG)
+![Image of detail_view](screenshots/detail_view.JPG)
