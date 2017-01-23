@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.android.philip.photoapp.api.PxApi;
@@ -20,12 +19,13 @@ import com.fivehundredpx.greedolayout.GreedoLayoutManager;
 import com.fivehundredpx.greedolayout.GreedoSpacingItemDecoration;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements XAuth500pxTask.Delegate {
     private static final String TAG = "MainActivity";
-    private static final int STATIC_INTEGER_VALUE = 12345;
+    private static final int LOGIN_ACTIVITY_INT = 0;
+    private static final int IMG_DETAIL_ACTIVITY_INT = 1;
+    private static final int NUMBER_OG_IMG_IN_ONE_SCREEN = 6;
 
     private static String mUsername;
     private AccessToken mAccessToken;
@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
 
     private RecyclerView mRecyclerView;
     private ImageAdapter mImgAdapter;
+    private GreedoLayoutManager mLayoutManager;
 
     private static ImgStore mImgStore;
 
@@ -54,32 +55,21 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         mImgAdapter = new ImageAdapter(this, mImgStore, new PhotoOnClickListener());
-        final GreedoLayoutManager layoutManager = new GreedoLayoutManager(mImgAdapter);
-        layoutManager.setMaxRowHeight(MeasUtils.dpToPx(150, this));
+        mLayoutManager = new GreedoLayoutManager(mImgAdapter);
+        mLayoutManager.setMaxRowHeight(MeasUtils.dpToPx(150, this));
 
-        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mImgAdapter);
 
         int spacing = MeasUtils.dpToPx(4, this);
         mRecyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
 
 
-        // Login
+        // Fire Login activity
         this.mPxApi = null;
-        /*
-        XAuth500pxTask loginTask = new XAuth500pxTask(this);
-        try {
-            this.mAccessToken = loginTask.execute(getString(R.string.consumer_key), getString(R.string.consumer_secret),
-                    "", "").get();
-        } catch (Exception e) {
-            Log.w(TAG, e.toString());
-        }
-        this.mPxApi = new PxApi(this.mAccessToken, getString(R.string.consumer_key), getString(R.string.consumer_secret));
-        */
-
 
         Intent logInIntent = new Intent(this, LoginActivity.class);
-        MainActivity.this.startActivityForResult(logInIntent, STATIC_INTEGER_VALUE);
+        MainActivity.this.startActivityForResult(logInIntent, LOGIN_ACTIVITY_INT);
     }
 
     public class PhotoOnClickListener implements View.OnClickListener {
@@ -92,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
             fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.CACHE), mImgStore.getImgNames());
             fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.URL), mImgStore.getImgs());
 
-            MainActivity.this.startActivity(fullScreenIntent);
+            MainActivity.this.startActivityForResult(fullScreenIntent, IMG_DETAIL_ACTIVITY_INT);
         }
     }
 
@@ -100,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch(requestCode) {
-            case (STATIC_INTEGER_VALUE) : {
+            case (LOGIN_ACTIVITY_INT) : {
                 if (resultCode == Activity.RESULT_OK) {
                     mUsername = data.getStringExtra(getString(R.string.USERNAME));
                     mAccessToken = (AccessToken) data.getExtras().get((getString(R.string.ACCESS_TOKEN)));
@@ -109,6 +99,15 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
                     refreshImgStorage();
                 }
                 break;
+            }
+            case (IMG_DETAIL_ACTIVITY_INT) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    int lastIdx = data.getIntExtra(getString(R.string.LAST_POSITION), 0);
+                    int itemsCnt = mImgStore.size();
+                    if (itemsCnt - lastIdx < NUMBER_OG_IMG_IN_ONE_SCREEN)
+                        lastIdx = itemsCnt - NUMBER_OG_IMG_IN_ONE_SCREEN;
+                    mLayoutManager.scrollToPosition(lastIdx);
+                }
             }
         }
     }

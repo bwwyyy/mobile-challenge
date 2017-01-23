@@ -7,4 +7,5 @@
     <string name="URL">url</string>
     <string name="USERNAME">username</string>
     <string name="ACCESS_TOKEN">access_token</string>
+    <string name="LAST_POSITION">last_position</string>
 </resources>

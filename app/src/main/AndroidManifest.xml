@@ -23,7 +23,8 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FullScreenImgActivity">
+            android:name=".FullScreenImgActivity"
+            android:configChanges="orientation|screenSize">
         </activity>
 
         <activity

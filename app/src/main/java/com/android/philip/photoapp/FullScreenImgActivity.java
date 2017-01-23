@@ -1,5 +1,6 @@
 package com.android.philip.photoapp;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,7 +28,7 @@ public class FullScreenImgActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static String [] mMemoryCache;
     private static String [] mImgCache;
-    private int mCurrIdx;
+    private static int mCurrIdx;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,13 @@ public class FullScreenImgActivity extends AppCompatActivity {
 
     }
 
-
+    @Override
+    public void onBackPressed() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra(getString(R.string.LAST_POSITION), mCurrIdx);
+        setResult(Activity.RESULT_OK, resultIntent);
+        super.onBackPressed();
+    }
 
     /**
      * A placeholder fragment containing a simple view.
@@ -74,6 +81,7 @@ public class FullScreenImgActivity extends AppCompatActivity {
 
             args.putString(IMGNAME, mMemoryCache[index]);
 
+            mCurrIdx = index;
 
             fragment.setArguments(args);
             return fragment;
