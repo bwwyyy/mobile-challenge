@@ -19,11 +19,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PhotoViewHol
 
     private Context mContext;
     private ImgStore mCache;
+    private MainActivity.PhotoOnClickListener mPhotoOnClickListener;
 
-    public ImageAdapter(Context c, ImgStore cache)  {
+    public ImageAdapter(Context c, ImgStore cache, MainActivity.PhotoOnClickListener photoOnClickListener)  {
         Log.d(TAG, "Initialize");
         mContext = c;
         mCache = cache;
+        mPhotoOnClickListener = photoOnClickListener;
     }
 
     @Override
@@ -48,6 +50,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PhotoViewHol
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT
         ));
+        imageView.setOnClickListener(mPhotoOnClickListener);
         return new PhotoViewHolder(imageView);
     }
 

@@ -1,5 +1,6 @@
 package com.android.philip.photoapp;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -52,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         // Main activity container
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
-        mImgAdapter = new ImageAdapter(this, mImgStore);
+        mImgAdapter = new ImageAdapter(this, mImgStore, new PhotoOnClickListener());
         final GreedoLayoutManager layoutManager = new GreedoLayoutManager(mImgAdapter);
         layoutManager.setMaxRowHeight(MeasUtils.dpToPx(150, this));
 
@@ -81,6 +82,20 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
                 refreshImgStorage();
             }
         });
+    }
+
+    public class PhotoOnClickListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            int idx = mRecyclerView.getChildLayoutPosition(v);
+
+            Intent fullScreenIntent = new Intent(v.getContext(), FullScreenImgActivity.class);
+            fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.INDEX), idx);
+            fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.CACHE), mImgStore.getImgNames());
+            fullScreenIntent.putExtra(MainActivity.class.getName() + getString(R.string.URL), mImgStore.getImgs());
+
+            MainActivity.this.startActivity(fullScreenIntent);
+        }
     }
 
     @Override
