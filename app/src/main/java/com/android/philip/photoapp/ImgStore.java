@@ -10,8 +10,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ImgStore implements Serializable {
     private static final String TAG = "ImgStore";
 
+    // Image store to store the json information for each using image in Hash Table.
     private transient Hashtable<String, JSONObject> mImgInfo;
     private Hashtable<Integer, String> mIdxMap;
+
+    // Keep track the # of img
     private AtomicInteger mSize;
 
     public ImgStore() {
@@ -45,6 +48,7 @@ public class ImgStore implements Serializable {
 
 
     public JSONObject getImageInfo(int idx) {
+        // using idx as initial Key to find the Key of photo json information.
         if (mIdxMap.containsKey(idx)) {
             return getImageInfo(mIdxMap.get(idx));
         }

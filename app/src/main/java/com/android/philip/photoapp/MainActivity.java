@@ -45,13 +45,11 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         mUsername = "";
         mImgStore = new ImgStore();
 
-
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
                 WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+
+        // Main activity photo container
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
-
-
-        // Main activity container
         mRecyclerView = (RecyclerView)findViewById(R.id.recycler_view);
 
         mImgAdapter = new ImageAdapter(this, mImgStore, new PhotoOnClickListener());
@@ -65,13 +63,14 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         mRecyclerView.addItemDecoration(new GreedoSpacingItemDecoration(spacing));
 
 
-        // Fire Login activity
+        // Fire Login activity to get OAuth pass.
         this.mPxApi = null;
 
         Intent logInIntent = new Intent(this, LoginActivity.class);
         MainActivity.this.startActivityForResult(logInIntent, LOGIN_ACTIVITY_INT);
     }
 
+    // Configure onclick listener to fire detailed photo view when tapped.
     public class PhotoOnClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -86,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
         }
     }
 
+    // Handle returned result from login activity and full screen photo activity.
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -121,6 +121,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
     @Override
     public void onFail(FiveHundredException e) {}
 
+    // Helper function to refresh the photo container of the main page with up-to-date data.
     private void refreshImgStorage () {
         String url = "/photos?feature=user&username=" + mUsername + "&sort=created_at&image_size=20&include_store=store_download&include_states=voted";
 
@@ -148,6 +149,7 @@ public class MainActivity extends AppCompatActivity implements XAuth500pxTask.De
                 return 0;
             }
 
+            // Render to the main thread.
             @Override
             protected void onPostExecute(Integer in) {
                 if (in == -1)

@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 public class FullScreenImgActivity extends AppCompatActivity {
     private static final String TAG = "FullScreenImgActivity";
 
+    // Using View pager and SectionsPagerAdapter to set up a swipable view.
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
     /**
@@ -70,10 +71,7 @@ public class FullScreenImgActivity extends AppCompatActivity {
         public PlaceholderFragment() {
         }
 
-        /**
-         * Returns a new instance of this fragment for the given section
-         * number.
-         */
+        //Returns a new instance of this fragment for the given section index.
         public static PlaceholderFragment newInstance(int index) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();

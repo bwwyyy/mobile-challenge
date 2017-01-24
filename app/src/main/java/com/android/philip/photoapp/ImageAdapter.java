@@ -58,6 +58,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PhotoViewHol
     public void onBindViewHolder(PhotoViewHolder holder, int position) {
         JSONObject currImg = mCache.getImageInfo(position);
         try {
+            // Using Picasso to efficiently load the bitmap at the background.
             Picasso.with(mContext)
                     .load(currImg.getString("image_url"))
                     .into(holder.mImageView);
@@ -72,6 +73,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PhotoViewHol
         return mCache.size();
     }
 
+    // Calculated the Width/Height ratio on each img.
     private double calculateImageAspectRatios(int idx) {
         JSONObject currImg = mCache.getImageInfo(idx);
         if (currImg != null) {
@@ -84,7 +86,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.PhotoViewHol
         return 1.0;
     }
 
-
+    // Update local storage.
     public void updateDataSet (ImgStore cache) {
         mCache = cache;
     }

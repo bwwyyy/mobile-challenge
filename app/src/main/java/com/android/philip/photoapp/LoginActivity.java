@@ -35,6 +35,8 @@ public class LoginActivity extends Activity  implements XAuth500pxTask.Delegate 
         mPwd = (EditText)findViewById(R.id.pwd_input);
 
         mAccessToken = null;
+
+        // Initialize the login Task using 500px's OAuth Api.
         mLoginTask = new XAuth500pxTask(this);
 
 
@@ -51,6 +53,7 @@ public class LoginActivity extends Activity  implements XAuth500pxTask.Delegate 
                     Log.w(TAG, e.toString());
                 }
 
+                // Try to pass the identity check using username and pwd.
                 if (mAccessToken == null) {
                     Toast.makeText(getApplicationContext(), "Wrong Credentials",Toast.LENGTH_SHORT).show();
                 } else {
